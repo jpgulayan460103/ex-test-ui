@@ -7,6 +7,7 @@ import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Table, Typography, Input, Form, Select } from 'antd';
 import axios from 'axios';
+import Highlighter from "react-highlight-words";
 
 import { CloseCircleTwoTone, CheckCircleTwoTone } from '@ant-design/icons';
 
@@ -23,6 +24,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [statistics, setStatistics] = useState([]);
   const [barangays, setBarangays] = useState([]);
+  const [keywords, setKeywords] = useState([]);
 
   const queryString = (e) => {
     let searchString = e.target.value;
@@ -30,6 +32,7 @@ function App() {
       ...searchOptions,
       keyword: searchString,
     });
+    setKeywords(searchString.split(",").map(item => item.trim()));
   }
 
   const selectBarangay = (e) => {
@@ -118,7 +121,12 @@ function App() {
       key: 'full_name_ln',
       render: (text, record) => (
         <span>
-          <span>{`${record.lastname ? record.lastname : ""}, ${record.firstname ? record.firstname : ""} ${record.midname ? record.midname : ""} ${record.ext ? record.ext : ""}`}</span>
+          <Highlighter
+            highlightStyle={{ backgroundColor: '#ffe4bf', padding: 0 }}
+            searchWords={keywords}
+            autoEscape={true}
+            textToHighlight={`${record.lastname ? record.lastname : ""}, ${record.firstname ? record.firstname : ""} ${record.midname ? record.midname : ""} ${record.ext ? record.ext : ""}`}
+          />
         </span>
       ),
     },
