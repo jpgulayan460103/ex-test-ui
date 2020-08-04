@@ -5,13 +5,13 @@ import logo from './logo.png';
 import './styles.css';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Table, Typography, Input, Form, Select } from 'antd';
+import { Button, Table, Typography, Input, Form, Select, Space  } from 'antd';
 import axios from 'axios';
 import Highlighter from "react-highlight-words";
 
-import { CloseCircleTwoTone, CheckCircleTwoTone } from '@ant-design/icons';
+import { CloseCircleTwoTone, CheckCircleTwoTone, ExclamationCircleTwoTone } from '@ant-design/icons';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 
 function App() {
@@ -112,6 +112,7 @@ function App() {
           <span>
             { (record.category == "certified list") ? (<CheckCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#52c41a"/>) : "" }
             { (record.category != "certified list" && record.category != "waitlisted") ? (<CloseCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#eb2f96"/>) : "" }
+            { (record.category != "certified list" && record.category == "waitlisted") ? (<ExclamationCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#842feb"/>) : "" }
           </span>
         </span>
       ),
@@ -193,7 +194,7 @@ function App() {
               <br />
               <Form name="normal_login" className="login-form" layout="inline" onFinish={getBeneficiaries} >
                 <Form.Item name="username">
-                  <Input placeholder="Search" allowClear onChange={(e) => {queryString(e)}} style={{width: "250px"}}  />
+                  <Input autoComplete="off" placeholder="Search" allowClear onChange={(e) => {queryString(e)}} style={{width: "250px"}}  />
                 </Form.Item>
                 <Form.Item name="barangay">
                   <Select
@@ -211,9 +212,35 @@ function App() {
                     Search
                   </Button>
                 </Form.Item>
-              </Form>
+              </Form> 
+              { (keywords.length != 0 ? (
+                <Space>
+                  <Text>keywords: </Text>
+                  {keywords.map(item => {
+                    return <Text>"<Text strong>{item}</Text>"</Text>
+                  })}
+                </Space>
+              ) : "") }
               <br />
-              <Table dataSource={dataSource} columns={columns} loading={loading} pagination={{ position: ['topLeft', 'bottomLeft'] }} />
+              <Table
+                dataSource={dataSource}
+                columns={columns}
+                loading={loading}
+                pagination={{ position: ['topLeft', 'bottomLeft'] }}
+                expandable={{
+                  expandedRowRender: record => {
+                    return (<div>
+                      <p style={{ margin: 0 }}>Category: <b>{record.category}</b></p>
+                      <p style={{ margin: 0 }}>Name: <b>{record.full_name_fn}</b></p>
+                      <p style={{ margin: 0 }}>Payment Category: <b>{record.payment_category}</b></p>
+                      <p style={{ margin: 0 }}>Payout Branch: <b>{record.payout_branch}</b></p>
+                      <p style={{ margin: 0 }}>Payout Partner: <b>{record.payout_partner}</b></p>
+                      <p style={{ margin: 0 }}>Cash Out Reference Number: <b>{record.cash_out_ref_number}</b></p>
+                      <p style={{ margin: 0 }}>Payout Schedule: <b>{record.schedule}</b></p>
+                    </div>);
+                  },
+                }}
+                />
               <Title level={3}>Total Records:</Title>
               { populateStatistics() }
             </div>
