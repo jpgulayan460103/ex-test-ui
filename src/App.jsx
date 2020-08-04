@@ -100,6 +100,23 @@ function App() {
       .then(function () {
       });
   }
+
+  const iconStatus = (record) => {
+    if(record.source == "additional" && record.category == "certified list without reference number"){
+      return <ExclamationCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#842feb"/>;
+    }else if(record.source == "additional" && record.category != "certified list without reference number"){
+      return <CloseCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#eb2f96"/>;
+    }
+    switch (record.category) {
+      case "certified list without reference number":
+      case "certified list with reference number":
+        return <CheckCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#52c41a"/>;
+        break;
+      default:
+        return <CloseCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#eb2f96"/>;
+        break;
+    }
+  }
   
   const dataSource = beneficiaries;
   
@@ -110,9 +127,7 @@ function App() {
       render: (text, record) => (
         <span>
           <span>
-            { (record.category == "certified list") ? (<CheckCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#52c41a"/>) : "" }
-            { (record.category != "certified list" && record.category != "waitlisted") ? (<CloseCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#eb2f96"/>) : "" }
-            { (record.category != "certified list" && record.category == "waitlisted") ? (<ExclamationCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#842feb"/>) : "" }
+            { iconStatus(record) }
           </span>
         </span>
       ),
@@ -230,7 +245,8 @@ function App() {
                 expandable={{
                   expandedRowRender: record => {
                     return (<div>
-                      <p style={{ margin: 0 }}>Category: <b>{record.category}</b></p>
+                      <p style={{ margin: 0 }}>Source: <b>{record.source}</b></p>
+                      <p style={{ margin: 0 }}>Category: <b>{record.category} {record.remarks}</b></p>
                       <p style={{ margin: 0 }}>Name: <b>{record.full_name_fn}</b></p>
                       <p style={{ margin: 0 }}>Payment Category: <b>{record.payment_category}</b></p>
                       <p style={{ margin: 0 }}>Payout Branch: <b>{record.payout_branch}</b></p>
