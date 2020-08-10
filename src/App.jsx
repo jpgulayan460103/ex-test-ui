@@ -22,7 +22,8 @@ function App() {
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [searchOptions, setSearchOptions] = useState({});
   const [loading, setLoading] = useState(false);
-  const [statistics, setStatistics] = useState([]);
+  const [categoryStatistics, setCategoryStatistics] = useState([]);
+  const [sourceStatistics, setSourceStatistics] = useState([]);
   const [barangays, setBarangays] = useState([]);
   const [keywords, setKeywords] = useState([]);
 
@@ -65,16 +66,32 @@ function App() {
   }
 
   const getStatistics = () => {
-    axios.get('http://localhost:3000/beneficiaries/statistics',{params: searchOptions})
+    axios.get('http://localhost:3000/beneficiaries/statistics/category',{params: searchOptions})
       .then(function (response) {
         setLoading(false);
         let beneficiaryResponse = response.data.data;
         beneficiaryResponse.map((item, index) => {
-          item.key = `statistic_${index}`;
+          item.key = `category_statistic_${index}`;
           return item;
         })
-        setStatistics(beneficiaryResponse);
+        setCategoryStatistics(beneficiaryResponse);
         getBarangays();
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      .then(function () {
+      });
+
+      axios.get('http://localhost:3000/beneficiaries/statistics/source',{params: searchOptions})
+      .then(function (response) {
+        setLoading(false);
+        let beneficiaryResponse = response.data.data;
+        beneficiaryResponse.map((item, index) => {
+          item.key = `source_statistic_${index}`;
+          return item;
+        })
+        setSourceStatistics(beneficiaryResponse);
       })
       .catch(function (error) {
         console.log(error);
@@ -174,10 +191,17 @@ function App() {
   ];
 
 
-  const populateStatistics = () => {
+  const populateCategoryStatistics = () => {
     return (
       <div>
-        {statistics.map(statistic => {
+        {sourceStatistics.map(statistic => {
+          return (
+            <p key={statistic.key}>
+              <b>{statistic.source.toUpperCase()}:</b> <span>{statistic.source_count}</span>
+            </p>
+          );
+        })}
+        {categoryStatistics.map(statistic => {
           return (
             <p key={statistic.key}>
               <b>{statistic.category.toUpperCase()}:</b> <span>{statistic.category_count}</span>
@@ -258,7 +282,7 @@ function App() {
                 }}
                 />
               <Title level={3}>Total Records:</Title>
-              { populateStatistics() }
+              { populateCategoryStatistics() }
             </div>
           </div>
         </div>
