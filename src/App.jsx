@@ -9,7 +9,7 @@ import { Button, Table, Typography, Input, Form, Select, Space  } from 'antd';
 import axios from 'axios';
 import Highlighter from "react-highlight-words";
 
-import { CloseCircleTwoTone, CheckCircleTwoTone, ExclamationCircleTwoTone } from '@ant-design/icons';
+import { CloseCircleTwoTone, CheckCircleTwoTone, ExclamationCircleTwoTone, SmileTwoTone } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -116,9 +116,12 @@ function App() {
       })
       .then(function () {
       });
-  }
-
-  const iconStatus = (record) => {
+    }
+    
+    const iconStatus = (record) => {
+      if(record.source == "paid"){
+        return <SmileTwoTone  style={{fontSize: 20}}  twoToneColor="#FFD700"/>;
+      }
     if(record.source == "additional" && record.category == "certified list without reference number"){
       return <ExclamationCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#842feb"/>;
     }else if(record.source == "additional" && record.category != "certified list without reference number"){
