@@ -136,10 +136,10 @@ function App() {
       });
     }
     
-    const iconStatus = (record) => {
-      if(record.source == "paid"){
-        return <SmileTwoTone  style={{fontSize: 20}}  twoToneColor="#FFD700"/>;
-      }
+  const iconStatus = (record) => {
+    if(record.source == "1st tranche" && record.category == "consolidated paid beneficiaries"){
+      return <SmileTwoTone  style={{fontSize: 20}}  twoToneColor="#FFD700"/>;
+    }
     if(record.source == "additional" && record.category == "certified list without reference number"){
       return <ExclamationCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#842feb"/>;
     }else if(record.source == "additional" && record.category != "certified list without reference number"){
@@ -298,6 +298,8 @@ function App() {
                       <p style={{ margin: 0 }}>Payout Partner: <b>{record.payout_partner}</b></p>
                       <p style={{ margin: 0 }}>Cash Out Reference Number: <b>{record.cash_out_ref_number}</b></p>
                       <p style={{ margin: 0 }}>Payout Schedule: <b>{record.schedule}</b></p>
+                      <p style={{ margin: 0 }}>Batch and Part: <b>{record.batch_part}</b></p>
+                      <p style={{ margin: 0 }}>Starpay Disbursement Status: <b>{record.starpay_status}</b></p>
                     </div>);
                   },
                 }}
