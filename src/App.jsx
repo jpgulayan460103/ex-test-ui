@@ -5,11 +5,11 @@ import logo from './logo.png';
 import './styles.css';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Table, Typography, Input, Form, Select, Space  } from 'antd';
+import { Button, Table, Typography, Input, Form, Select, Space, Tree   } from 'antd';
 import axios from 'axios';
 import Highlighter from "react-highlight-words";
 
-import { CloseCircleTwoTone, CheckCircleTwoTone, ExclamationCircleTwoTone, SmileTwoTone } from '@ant-design/icons';
+import { CloseCircleTwoTone, CheckCircleTwoTone, ExclamationCircleTwoTone, SmileTwoTone, DownOutlined  } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -17,13 +17,16 @@ const { Option } = Select;
 function App() {
   useEffect(() => {
     getBeneficiaries();
-    getStatistics();
+    getSourceStatistics();
+    getBarangays();
   }, []);
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [searchOptions, setSearchOptions] = useState({});
   const [loading, setLoading] = useState(false);
   const [categoryStatistics, setCategoryStatistics] = useState([]);
   const [sourceStatistics, setSourceStatistics] = useState([]);
+  const [statistics, setStatistics] = useState([]);
+  const [statisticsTotal, setStatisticsTotal] = useState(0);
   const [barangays, setBarangays] = useState([]);
   const [keywords, setKeywords] = useState([]);
 
@@ -42,6 +45,10 @@ function App() {
       ...searchOptions,
       barangay: searchString,
     });
+  }
+
+  const onSelect = (selectedKeys, info) => {
+    console.log('selected', selectedKeys, info);
   }
 
   const getBeneficiaries = () => {
@@ -65,33 +72,44 @@ function App() {
       });
   }
 
-  const getStatistics = () => {
-    axios.get('http://localhost:3000/beneficiaries/statistics/category',{params: searchOptions})
+  const getSourceStatistics = () => {
+    axios.get('http://localhost:3000/beneficiaries/statistics/source',{params: searchOptions})
       .then(function (response) {
         setLoading(false);
-        let beneficiaryResponse = response.data.data;
-        beneficiaryResponse.map((item, index) => {
-          item.key = `category_statistic_${index}`;
+        let sourceResponse = response.data.data;
+        sourceResponse.map((item, index) => {
+          item.key = `source_statistic_${index}`;
+          item.title = `${item.source}: ${item.source_count}`;
           return item;
         })
-        setCategoryStatistics(beneficiaryResponse);
-        getBarangays();
+        setSourceStatistics(sourceResponse);
+        getCategoryStatistics(sourceResponse);
       })
       .catch(function (error) {
         console.log(error);
       })
       .then(function () {
       });
+  }
 
-      axios.get('http://localhost:3000/beneficiaries/statistics/source',{params: searchOptions})
+  const getCategoryStatistics = (sourceResponse) => {
+    axios.get('http://localhost:3000/beneficiaries/statistics/category',{params: searchOptions})
       .then(function (response) {
         setLoading(false);
         let beneficiaryResponse = response.data.data;
         beneficiaryResponse.map((item, index) => {
-          item.key = `source_statistic_${index}`;
+          item.key = `category_statistic_${index}`;
+          item.title = `${item.category}: ${item.category_count}`;
           return item;
         })
-        setSourceStatistics(beneficiaryResponse);
+        for (let index = 0; index < sourceResponse.length; index++) {
+          sourceResponse[index].children = beneficiaryResponse.filter(item => item.source == sourceResponse[index].source)
+        }
+        let total = sourceResponse.reduce((accumulator, currentValue) => {
+          return accumulator + parseInt(currentValue.source_count);
+        }, 0);
+        setStatisticsTotal(total);
+        setStatistics(sourceResponse)
       })
       .catch(function (error) {
         console.log(error);
@@ -284,8 +302,16 @@ function App() {
                   },
                 }}
                 />
-              <Title level={3}>Total Records:</Title>
-              { populateCategoryStatistics() }
+              <Title level={3}>Total Records: {statisticsTotal}</Title>
+              {/* { populateCategoryStatistics() } */}
+
+              <Tree
+                showLine
+                switcherIcon={<DownOutlined />}
+                defaultExpandAll={true}
+                onSelect={onSelect}
+                treeData={statistics}
+            />
             </div>
           </div>
         </div>
