@@ -18,8 +18,10 @@ function App() {
   useEffect(() => {
     getBeneficiaries();
     getSourceStatistics();
+    // getProvinces();
     getBarangays();
   }, []);
+  const baseUrl = "http://localhost:3000";
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [searchOptions, setSearchOptions] = useState({});
   const [loading, setLoading] = useState(false);
@@ -28,6 +30,8 @@ function App() {
   const [statistics, setStatistics] = useState([]);
   const [statisticsTotal, setStatisticsTotal] = useState(0);
   const [barangays, setBarangays] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+  const [cities, setCities] = useState([]);
   const [keywords, setKeywords] = useState([]);
 
   const queryString = (e) => {
@@ -53,15 +57,15 @@ function App() {
 
   const getBeneficiaries = () => {
     setLoading(true);
-    axios.get('http://localhost:3000/beneficiaries',{params: searchOptions})
+    axios.get(`${baseUrl}/beneficiaries`,{params: searchOptions})
       .then(function (response) {
         setLoading(false);
-        let beneficiaryResponse = response.data.data;
-        beneficiaryResponse.map(item => {
+        let APIResponse = response.data.data;
+        APIResponse.map(item => {
           item.key = item.id;
           return item;
         })
-        setBeneficiaries(beneficiaryResponse);
+        setBeneficiaries(APIResponse);
       })
       .catch(function (error) {
         setLoading(false);
@@ -73,7 +77,7 @@ function App() {
   }
 
   const getSourceStatistics = () => {
-    axios.get('http://localhost:3000/beneficiaries/statistics/source',{params: searchOptions})
+    axios.get(`${baseUrl}/beneficiaries/statistics/source`,{params: searchOptions})
       .then(function (response) {
         setLoading(false);
         let sourceResponse = response.data.data;
@@ -93,17 +97,17 @@ function App() {
   }
 
   const getCategoryStatistics = (sourceResponse) => {
-    axios.get('http://localhost:3000/beneficiaries/statistics/category',{params: searchOptions})
+    axios.get(`${baseUrl}/beneficiaries/statistics/category`,{params: searchOptions})
       .then(function (response) {
         setLoading(false);
-        let beneficiaryResponse = response.data.data;
-        beneficiaryResponse.map((item, index) => {
+        let APIResponse = response.data.data;
+        APIResponse.map((item, index) => {
           item.key = `category_statistic_${index}`;
           item.title = `${item.category}: ${item.category_count}`;
           return item;
         })
         for (let index = 0; index < sourceResponse.length; index++) {
-          sourceResponse[index].children = beneficiaryResponse.filter(item => item.source == sourceResponse[index].source)
+          sourceResponse[index].children = APIResponse.filter(item => item.source == sourceResponse[index].source)
         }
         let total = sourceResponse.reduce((accumulator, currentValue) => {
           return accumulator + parseInt(currentValue.source_count);
@@ -119,22 +123,40 @@ function App() {
   }
 
   const getBarangays = () => {
-    axios.get('http://localhost:3000/beneficiaries/barangays',{params: searchOptions})
-      .then(function (response) {
-        setLoading(false);
-        let beneficiaryResponse = response.data.data;
-        beneficiaryResponse.map((item, index) => {
-          item.key = `barangay_${index}`;
-          return item;
-        })
-        setBarangays(beneficiaryResponse);
+    axios.get(`${baseUrl}/beneficiaries/barangays`,{params: searchOptions})
+    .then(function (response) {
+      setLoading(false);
+      let APIResponse = response.data.data;
+      APIResponse.map((item, index) => {
+        item.key = `barangay_${index}`;
+        return item;
       })
-      .catch(function (error) {
-        console.log(error);
+      setBarangays(APIResponse);
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .then(function () {
+    });
+  }
+
+  const getProvinces = () => {
+    axios.get(`${baseUrl}/beneficiaries/provinces`,{params: searchOptions})
+    .then(function (response) {
+      setLoading(false);
+      let APIResponse = response.data.data;
+      APIResponse.map((item, index) => {
+        item.key = `province_${index}`;
+        return item;
       })
-      .then(function () {
-      });
-    }
+      setProvinces(APIResponse);
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .then(function () {
+    });
+  }
     
   const iconStatus = (record) => {
     if(record.source == "1st tranche" && record.category == "consolidated paid beneficiaries"){
@@ -148,6 +170,7 @@ function App() {
     switch (record.category) {
       case "certified list without reference number":
       case "certified list with reference number":
+      case "certified list":
         return <CheckCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#52c41a"/>;
         break;
       default:
@@ -190,9 +213,9 @@ function App() {
       key: 'birthday',
     },
     {
-      title: 'Barangay',
-      dataIndex: 'barangay_name',
-      key: 'barangay_name',
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
     },
     {
       title: 'Source',
@@ -236,7 +259,7 @@ function App() {
   const populateBarangaySelection = () => {
     let children = [];
     barangays.map(item => {
-      children.push(<Option key={item.key} value={item.barangay_name}>{item.barangay_name}</Option>);
+    children.push(<Option key={item.key} value={item.barangay_name}  label={item.barangay_name}>{item.barangay_name}, {item.city_name}</Option>);
     });
     return children;
   }
@@ -260,9 +283,10 @@ function App() {
                   <Select
                     allowClear
                     mode="multiple"
-                    style={{ width: '250px' }}
+                    style={{ width: '300px' }}
                     placeholder="Please select Barangay"
                     onChange={selectBarangay}
+                    optionLabelProp="label"
                   >
                     { populateBarangaySelection() }
                   </Select>
@@ -293,6 +317,7 @@ function App() {
                       <p style={{ margin: 0 }}>Source: <b>{record.source}</b></p>
                       <p style={{ margin: 0 }}>Category: <b>{record.category} {record.remarks}</b></p>
                       <p style={{ margin: 0 }}>Name: <b>{record.full_name_fn}</b></p>
+                      <p style={{ margin: 0 }}>Address: <b>{record.address}, {record.province_name}</b></p>
                       <p style={{ margin: 0 }}>Payment Category: <b>{record.payment_category}</b></p>
                       <p style={{ margin: 0 }}>Payout Branch: <b>{record.payout_branch}</b></p>
                       <p style={{ margin: 0 }}>Payout Partner: <b>{record.payout_partner}</b></p>
