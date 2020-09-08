@@ -51,6 +51,14 @@ function App() {
     });
   }
 
+  const selectSearchType = (e) => {
+    let searchString = e;
+    setSearchOptions({
+      ...searchOptions,
+      searchType: searchString,
+    });
+  }
+
   const onSelect = (selectedKeys, info) => {
     console.log('selected', selectedKeys, info);
   }
@@ -162,9 +170,9 @@ function App() {
     if(record.source == "1st tranche" && record.category == "consolidated paid beneficiaries"){
       return <SmileTwoTone  style={{fontSize: 20}}  twoToneColor="#FFD700"/>;
     }
-    if(record.source == "additional" && record.category == "certified list without reference number"){
+    if(record.source == "additional" && (record.category == "certified list without reference number" || record.category == "certified list with reference number")){
       return <ExclamationCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#842feb"/>;
-    }else if(record.source == "additional" && record.category != "certified list without reference number"){
+    }else if(record.source == "additional" && (record.category != "certified list without reference number" || record.category != "certified list with reference number")){
       return <CloseCircleTwoTone  style={{fontSize: 20}}  twoToneColor="#eb2f96"/>;
     }
     switch (record.category) {
@@ -291,6 +299,18 @@ function App() {
                     { populateBarangaySelection() }
                   </Select>
                 </Form.Item>
+                <Form.Item name="searchType">
+                  <Select
+                    allowClear
+                    style={{ width: '120px' }}
+                    placeholder="Please select Search Type"
+                    onChange={selectSearchType}
+                    defaultValue="full_name_ln"
+                  >
+                    <Option key="full_name_ln" value="full_name_ln">Full Name</Option>
+                    <Option key="cash_out_ref_number" value="cash_out_ref_number">Ref Number</Option>
+                  </Select>
+                </Form.Item>
                 <Form.Item>
                   <Button type="primary" htmlType="submit" className="login-form-button">
                     Search
@@ -321,7 +341,18 @@ function App() {
                       <p style={{ margin: 0 }}>Payment Category: <b>{record.payment_category}</b></p>
                       <p style={{ margin: 0 }}>Payout Branch: <b>{record.payout_branch}</b></p>
                       <p style={{ margin: 0 }}>Payout Partner: <b>{record.payout_partner}</b></p>
-                      <p style={{ margin: 0 }}>Cash Out Reference Number: <b>{record.cash_out_ref_number}</b></p>
+                      <p style={{ margin: 0 }}>
+                        Cash Out Reference Number:
+                        <b>
+                          { record.cash_out_ref_number}
+                          {/* <Highlighter
+                            highlightStyle={{ backgroundColor: '#ffe4bf', padding: 0 }}
+                            searchWords={keywords}
+                            autoEscape={true}
+                            textToHighlight={`${record.cash_out_ref_number ? record.cash_out_ref_number : ""}`}
+                          /> */}
+                        </b>
+                      </p>
                       <p style={{ margin: 0 }}>Payout Schedule: <b>{record.schedule}</b></p>
                       <p style={{ margin: 0 }}>Batch and Part: <b>{record.batch_part}</b></p>
                       <p style={{ margin: 0 }}>Starpay Disbursement Status: <b>{record.starpay_status}</b></p>
