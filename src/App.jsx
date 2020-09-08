@@ -51,11 +51,11 @@ function App() {
     });
   }
 
-  const selectSearchType = (e) => {
+  const selectSource = (e) => {
     let searchString = e;
     setSearchOptions({
       ...searchOptions,
-      searchType: searchString,
+      source: searchString,
     });
   }
 
@@ -271,6 +271,13 @@ function App() {
     });
     return children;
   }
+  const populateSourceSelection = () => {
+    let children = [];
+    sourceStatistics.map(item => {
+    children.push(<Option key={item.key} value={item.source}  label={item.source}>{item.source}</Option>);
+    });
+    return children;
+  }
 
   return (
     <div className="App">
@@ -292,23 +299,21 @@ function App() {
                     allowClear
                     mode="multiple"
                     style={{ width: '300px' }}
-                    placeholder="Please select Barangay"
+                    placeholder="Barangay"
                     onChange={selectBarangay}
                     optionLabelProp="label"
                   >
                     { populateBarangaySelection() }
                   </Select>
                 </Form.Item>
-                <Form.Item name="searchType">
+                <Form.Item name="source">
                   <Select
                     allowClear
                     style={{ width: '120px' }}
-                    placeholder="Please select Search Type"
-                    onChange={selectSearchType}
-                    defaultValue="full_name_ln"
+                    placeholder="Source"
+                    onChange={selectSource}
                   >
-                    <Option key="full_name_ln" value="full_name_ln">Full Name</Option>
-                    <Option key="cash_out_ref_number" value="cash_out_ref_number">Ref Number</Option>
+                    { populateSourceSelection() }
                   </Select>
                 </Form.Item>
                 <Form.Item>
@@ -342,15 +347,14 @@ function App() {
                       <p style={{ margin: 0 }}>Payout Branch: <b>{record.payout_branch}</b></p>
                       <p style={{ margin: 0 }}>Payout Partner: <b>{record.payout_partner}</b></p>
                       <p style={{ margin: 0 }}>
-                        Cash Out Reference Number:
+                        Cash Out Reference Number:&nbsp;
                         <b>
-                          { record.cash_out_ref_number}
-                          {/* <Highlighter
+                          <Highlighter
                             highlightStyle={{ backgroundColor: '#ffe4bf', padding: 0 }}
                             searchWords={keywords}
                             autoEscape={true}
                             textToHighlight={`${record.cash_out_ref_number ? record.cash_out_ref_number : ""}`}
-                          /> */}
+                          />
                         </b>
                       </p>
                       <p style={{ margin: 0 }}>Payout Schedule: <b>{record.schedule}</b></p>
