@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography   } from 'antd';
+import { Typography, BackTop } from 'antd';
 import logo from './logo.png';
 const { Title, Text } = Typography;
 
@@ -22,6 +22,7 @@ const Layout = (props) => {
           </div>
         </div>
       </div>
+      <BackTop />
     </div>
   );
 }

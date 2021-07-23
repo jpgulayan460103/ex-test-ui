@@ -16,3 +16,15 @@
   border-radius: 10px;
   min-height: 90vh;
 }
+.custom-menu{
+  cursor: pointer;
+  color:black;
+}
+
+.custom-menu:hover { text-decoration: none; }
+.custom-menu-item:hover { background-color: rgba(0,0,0,0.03) }
+
+.anticon{
+  position: relative;
+  top: -0.25em;
+}

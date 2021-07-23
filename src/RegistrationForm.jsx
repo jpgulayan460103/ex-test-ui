@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Checkbox, Select } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import _cloneDeep from 'lodash/cloneDeep'
+import axios from './axios-settings'
 
 const { Option } = Select;
 
@@ -62,46 +63,7 @@ const RegistrationForm = (props) => {
       values.id = userId;
     }
     console.log(values);
-    
-    // API.User.save(values, formType)
-    // .then(res => {
-    //   setSubmit(false);
-    //   setFormError({});
-    //   if(props.type == "registration"){
-    //     formRef.current.resetFields();
-    //   }
-    //   let message = "";
-    //   let title = "Success";
-    //   if(formType == "create"){
-    //     title = "Registration success";
-    //     message = "Please contact administrator to activate your account.";
-    //   }else if(props.type == "user"){
-    //     message = "Account settings have been updated.";
-    //   }else{
-    //     message = "User has been updated. ";
-    //   }
-    //   Swal.fire({
-    //     title: title,
-    //     text: message,
-    //     icon: 'success',
-    //     confirmButtonText: 'OK',
-    //     onClose: () => {
-
-    //     }
-    //   })
-    //   setBarangay("");
-    //   setProvince("");
-    //   setCity("");
-    // })
-    // .catch(err => {
-    //   setSubmit(false);
-    //   if(err.response.status == 422){
-    //     setFormError(err.response.data.errors);
-    //   }
-    // })
-    // .then(res => {
-    //   setSubmit(false);
-    // })
+    axios.post(`/users`,values);
   };
 
   const onFinishFailed = errorInfo => {

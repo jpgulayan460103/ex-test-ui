@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 
 import { Button, Table, Typography, Input, Form, Select, Space, Tree   } from 'antd';
-import axios from 'axios';
 import Highlighter from "react-highlight-words";
+import axios from './axios-settings'
 
 import { DownOutlined } from '@ant-design/icons';
 
@@ -16,7 +16,6 @@ const SearchApp = () => {
     getSourceStatistics();
     getBarangays();
   }, []);
-  const baseUrl = "http://localhost:3000";
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [searchOptions, setSearchOptions] = useState({});
   const [loading, setLoading] = useState(false);
@@ -60,7 +59,7 @@ const SearchApp = () => {
 
   const getBeneficiaries = () => {
     setLoading(true);
-    axios.get(`${baseUrl}/beneficiaries`,{params: searchOptions})
+    axios.get(`/beneficiaries`,{params: searchOptions})
       .then(function (response) {
         setLoading(false);
         let APIResponse = response.data.data;
@@ -80,7 +79,7 @@ const SearchApp = () => {
   }
 
   const getSourceStatistics = () => {
-    axios.get(`${baseUrl}/beneficiaries/statistics/source`,{params: searchOptions})
+    axios.get(`/beneficiaries/statistics/source`,{params: searchOptions})
       .then(function (response) {
         setLoading(false);
         let sourceResponse = response.data.data;
@@ -100,7 +99,7 @@ const SearchApp = () => {
   }
 
   const getCategoryStatistics = (sourceResponse) => {
-    axios.get(`${baseUrl}/beneficiaries/statistics/category`,{params: searchOptions})
+    axios.get(`/beneficiaries/statistics/category`,{params: searchOptions})
       .then(function (response) {
         setLoading(false);
         let APIResponse = response.data.data;
@@ -126,7 +125,7 @@ const SearchApp = () => {
   }
 
   const getBarangays = () => {
-    axios.get(`${baseUrl}/beneficiaries/barangays`,{params: searchOptions})
+    axios.get(`/beneficiaries/barangays`,{params: searchOptions})
     .then(function (response) {
       setLoading(false);
       let APIResponse = response.data.data;
