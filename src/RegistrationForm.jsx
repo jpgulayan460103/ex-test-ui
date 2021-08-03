@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Checkbox, Select } from 'antd';
+import { Form, Input, Button, Checkbox, Select, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import _cloneDeep from 'lodash/cloneDeep'
 import axios from './axios-settings'
@@ -14,56 +14,70 @@ const tailLayout = {
   wrapperCol: { offset: 5, span: 17 },
 };
 
-const RegistrationForm = (props) => {
+const RegistrationForm = ({type}) => {
   const formRef = React.useRef();
   const [submit, setSubmit] = useState(false);
-  const [userPosition, setUserPosition] = useState("");
   const [formError, setFormError] = useState({});
-  const [provinces, setProvinces] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [barangays, setBarangays] = useState([]);
-  const [province, setProvince] = useState("");
-  const [city, setCity] = useState("");
-  const [barangay, setBarangay] = useState("");
   const [formType, setFormType] = useState("create");
   const [userId, setUserId] = useState(null);
   const [changePassword, setChangePassword] = useState(false);
+
   useEffect(() => {
-    getProvinces();
-  }, []);
-  useEffect(() => {
-    if(props.userData != null){
-      setFormType("update");
-      let userData = _cloneDeep(props.userData);
-      setUserId(userData.id);
-      setUserPosition(userData.position);
-      if(userData.barangay_id){
-        setCity(userData.barangay.city_psgc);
-        setProvince(userData.barangay.province_psgc);
-        userData.city = userData.barangay.city_psgc;
-        userData.province = userData.barangay.province_psgc;
-        setBarangay(userData.barangay_id);
-        setCities([{
-          city_name: userData.barangay.city_name,
-          city_psgc: userData.barangay.city_psgc,
-        }]);
-        setBarangays([{
-          barangay_name: userData.barangay.barangay_name,
-          id: userData.barangay.id,
-        }]);
-      }
-      formRef.current.setFieldsValue({
-        ...userData
-      });
+    if(type == "update"){
+      axios.get(`/logged`)
+      .then(res => {
+        let userData = res.data.data;
+        formRef.current.setFieldsValue({
+          ...userData
+        });
+        setFormType('update');
+        setUserId(userData.id);
+      })
+      .catch(err => {})
+      .then(res => {})
+      ;
     }
-  }, [props.userData]);
+  }, []);
+
   const onSubmit = values => {
     setSubmit(true);
+    setFormError({});
     if(formType == "update"){
       values.id = userId;
+      axios.put(`/users/${userId}`,values)
+      .then(res => {
+        setSubmit(false);
+        message.success(`You have successfully updated your profile.`);
+        setFormError({});
+      })
+      .catch(err => {
+        setSubmit(false);
+        setFormError(err.response.data.errors);
+        message.error(`Registration Failed.`);
+      })
+      .then(res => {
+        setSubmit(false);
+      })
+      ;
+    }else{
+      //register
+      axios.post(`/users`,values)
+      .then(res => {
+        setSubmit(false);
+        message.success(`You are registered, please wait for admin to approve your registration`);
+        formRef.current.resetFields();
+        setFormError({});
+      })
+      .catch(err => {
+        setSubmit(false);
+        setFormError(err.response.data.errors);
+        message.error(`Registration Failed.`);
+      })
+      .then(res => {
+        setSubmit(false);
+      })
+      ;
     }
-    console.log(values);
-    axios.post(`/users`,values);
   };
 
   const onFinishFailed = errorInfo => {
@@ -71,85 +85,14 @@ const RegistrationForm = (props) => {
   };
 
   const displayErrors = (field) => {
-    if(formError[field]){
+    if(formError[field] && formError[field].length != 0){
       return {
         validateStatus: 'error',
         help: formError[field][0]
       }
     }
   }
-  const getProvinces = () => {
-    // API.Barangay.getProvinces()
-    // .then(res => {
-    //   setProvinces(res.data.provinces);
-    // })
-    // .catch(res => {
-    // })
-    // .then(res => {})
-    // ;;
-  }
-  const getCities = (e) => {
-    // setCities([]);
-    // if(typeof e == "undefined"){
-    //   setProvince("");
-    // }else{
-    //   setProvince(e);
-    // }
-    // API.Barangay.getCities(e)
-    // .then(res => {
-    //   setCities(res.data.cities);
-    // })
-    // .catch(res => {
-    // })
-    // .then(res => {})
-    // ;;
-  }
-  const getBarangays = (city) => {
-    // setBarangays([]);
-    // if(typeof city == "undefined"){
-    //   setCity("");
-    // }else{
-    //   setCity(city);
-    // }
-    // API.Barangay.getBarangays(province,city)
-    // .then(res => {
-    //   setBarangays(res.data.barangays);
-    // })
-    // .catch(res => {
-    // })
-    // .then(res => {})
-    // ;;
-  }
-
-  const populateProvinces = () => {
-    let items = [];
-    provinces.map(item => {
-      items.push(<Option value={item.province_psgc} key={item.province_psgc}>{item.province_name}</Option>);
-    })
-    return items;
-  }
-  const populateCities = () => {
-    let items = [];
-    cities.map(item => {
-      items.push(<Option value={item.city_psgc} key={item.city_psgc}>{item.city_name}</Option>);
-    })
-    return items;
-  }
-  const populateBarangays = () => {
-    let items = [];
-    barangays.map(item => {
-      items.push(<Option value={item.id} key={item.id}>{item.barangay_name}</Option>);
-    })
-    return items;
-  }
-
-  const formSetBarangay = (e) => {
-    if(typeof e == "undefined"){
-      setBarangay("");
-    }else{
-      setBarangay(e);
-    }
-  }
+ 
 
   return (
     <div>
@@ -170,7 +113,7 @@ const RegistrationForm = (props) => {
           <Input prefix={<UserOutlined />} />
         </Form.Item>
 
-        { props.type == "user" || props.type == "update" ? (
+        { type == "update" ? (
           <Form.Item {...tailLayout} name="change_password" valuePropName="checked">
             <Checkbox onChange={(e) => {setChangePassword(e.target.checked)}}>Change Password</Checkbox>
           </Form.Item>

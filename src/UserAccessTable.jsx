@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Tag, Space } from 'antd';
 
-const UsersAccessTable = ({userLogs, user}) => {
+const UsersAccessTable = ({userLogs, user, loading}) => {
     const dataSource = userLogs
     const columns = [
         {
@@ -32,7 +32,7 @@ const UsersAccessTable = ({userLogs, user}) => {
     ];
     return ( 
         <React.Fragment>
-            <Table dataSource={dataSource} columns={columns} style={{width: "100%"}} />
+            <Table dataSource={dataSource} columns={columns} style={{width: "100%"}} loading={loading} />
         </React.Fragment>
      );
 }

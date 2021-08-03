@@ -3,6 +3,7 @@ import SearchApp from './SearchApp'
 import Login from './Login'
 import Layout from './Layout'
 import Users from './Users'
+import Profile from './Profile'
 import './styles.css';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -29,9 +30,10 @@ const App = (props) => {
     return (
       <React.Fragment>
         <ul className="list-group" style={{width: "120px"}}>
-          <Link className="custom-menu" to="/"><li className="list-group-item custom-menu-item">Home</li></Link>
-          <Link className="custom-menu" to="/users"><li className="list-group-item custom-menu-item">Users</li></Link>
-          <Link className="custom-menu" to="/logout"><li className="list-group-item custom-menu-item">Logout</li></Link>
+          <Link className="custom-menu" to="/pages/home"><li className="list-group-item custom-menu-item">Home</li></Link>
+          <Link className="custom-menu" to="/pages/users"><li className="list-group-item custom-menu-item">Users</li></Link>
+          <Link className="custom-menu" to="/pages/profile"><li className="list-group-item custom-menu-item">Profile</li></Link>
+          <a className="custom-menu" href="/logout"><li className="list-group-item custom-menu-item">Logout</li></a>
         </ul>
       </React.Fragment>
     );
@@ -55,13 +57,21 @@ const App = (props) => {
     </div>
 
     <Switch>
-      <Route path="/users">
+      <Route path="/pages/users">
         <Menu />
         <Layout><Users /></Layout>
       </Route>
-      <Route path="/login">
+      <Route path="/pages/login">
         <Menu />
         <Layout><Login /></Layout>
+      </Route>
+      <Route path="/pages/profile">
+        <Menu />
+        <Layout><Profile /></Layout>
+      </Route>
+      <Route path="/pages/home">
+        <Menu />
+        <Layout><SearchApp /></Layout>
       </Route>
       <Route path="/">
         <Menu />

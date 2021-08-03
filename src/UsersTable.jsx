@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
 import { Table, Tag, Switch } from 'antd';
 
-const UsersTable = ({users, getUserAccess, changeActiveStatus} ) => {
+const UsersTable = ({users, getUserAccess, changeActiveStatus, loading, deleteUser} ) => {
     const dataSource = users
     const columns = [
+        {
+            title: 'Access',
+            key: 'is_active',
+            render: (text, record) => (
+                <span>
+                    <Switch checkedChildren="On" unCheckedChildren="Off" defaultChecked={record.is_active == 1} onChange={(e) => { changeActiveStatus(e, record) }} />
+                </span>
+            ),
+        },
         {
             title: 'type',
             dataIndex: 'type',
@@ -27,20 +36,12 @@ const UsersTable = ({users, getUserAccess, changeActiveStatus} ) => {
             key: 'department_unit',
         },
         {
-            title: 'logs',
+            title: '',
             key: 'logs',
+            align: "center",
             render: (text, record) => (
                 <span>
-                    <a href="javascript:void(0)" onClick={() => { getUserAccess(record) }}>View</a>
-                </span>
-            ),
-        },
-        {
-            title: 'Access',
-            key: 'is_active',
-            render: (text, record) => (
-                <span>
-                    <Switch checkedChildren="On" unCheckedChildren="Off" defaultChecked={record.is_active == 1} onChange={(e) => { changeActiveStatus(e, record) }} />
+                    <a href="javascript:void(0)" onClick={() => { getUserAccess(record) }}>View Logs</a> | <a href="javascript:void(0)" onClick={() => { deleteUser(record) }}>Delete</a>
                 </span>
             ),
         },
@@ -49,7 +50,7 @@ const UsersTable = ({users, getUserAccess, changeActiveStatus} ) => {
     ];
     return ( 
         <React.Fragment>
-            <Table dataSource={dataSource} columns={columns} style={{width: "100%"}} />
+            <Table dataSource={dataSource} columns={columns} style={{width: "100%"}}  loading={loading}/>
         </React.Fragment>
      );
 }

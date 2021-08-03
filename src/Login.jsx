@@ -16,7 +16,7 @@ const Login = (props) => {
         </div>
         <div className="col-6">
             <Title level={3} style={{textAlign:"center"}}>Registration Form</Title>
-            <RegistrationForm />
+            <RegistrationForm type="create" />
         </div>
     </div>
   );

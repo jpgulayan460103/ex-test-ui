@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import axios from './axios-settings'
 const layout = {
@@ -18,10 +18,11 @@ const LoginForm = props => {
     axios.post(`/login`, values)
     .then(res => {
       setSubmit(false);
-      window.location = "/";
+      window.location = "/pages/home";
     })
     .catch(err => {
       setSubmit(false);
+      message.error(err.response.data.message);
     })
     .then(res => {
       setSubmit(false);
