@@ -246,6 +246,7 @@ const SearchApp = () => {
             </Space>
             ) : "") }
             <br />
+            <div className="table-responsive">
             <Table
             dataSource={dataSource}
             columns={columns}
@@ -279,6 +280,7 @@ const SearchApp = () => {
                 },
             }}
             />
+            </div>
             <Title level={3}>Total Records: {statisticsTotal}</Title>
 
             <Tree

@@ -6,10 +6,10 @@ import RegistrationForm from './RegistrationForm'
 const { Title, Text } = Typography;
 
 
-const Layout = (props) => {
+const Login = (props) => {
 
   return (
-    <div className="Layout row h-100 p-10">
+    <div className="Login row h-100 p-10">
         <div className="col-6">
             <Title level={3} style={{textAlign:"center"}}>Login Form</Title>
             <LoginForm />
@@ -22,4 +22,4 @@ const Layout = (props) => {
   );
 }
 
-export default Layout;
+export default Login;

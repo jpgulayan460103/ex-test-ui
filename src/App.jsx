@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SearchApp from './SearchApp'
 import Login from './Login'
 import Layout from './Layout'
+import Users from './Users'
 import './styles.css';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -29,7 +30,8 @@ const App = (props) => {
       <React.Fragment>
         <ul className="list-group" style={{width: "120px"}}>
           <Link className="custom-menu" to="/"><li className="list-group-item custom-menu-item">Home</li></Link>
-          <Link className="custom-menu" to="/login"><li className="list-group-item custom-menu-item">Login</li></Link>
+          <Link className="custom-menu" to="/users"><li className="list-group-item custom-menu-item">Users</li></Link>
+          <Link className="custom-menu" to="/logout"><li className="list-group-item custom-menu-item">Logout</li></Link>
         </ul>
       </React.Fragment>
     );
@@ -53,6 +55,10 @@ const App = (props) => {
     </div>
 
     <Switch>
+      <Route path="/users">
+        <Menu />
+        <Layout><Users /></Layout>
+      </Route>
       <Route path="/login">
         <Menu />
         <Layout><Login /></Layout>
