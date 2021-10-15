@@ -18,7 +18,8 @@ const LoginForm = props => {
     axios.post(`/login`, values)
     .then(res => {
       setSubmit(false);
-      window.location = "/pages/home";
+      window.location = "/sap/pages/home";
+      localStorage.setItem('token', res.data.token);
     })
     .catch(err => {
       setSubmit(false);

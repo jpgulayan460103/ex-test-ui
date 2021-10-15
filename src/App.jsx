@@ -26,14 +26,19 @@ import {
 const App = (props) => {
   const [menuShow, setMenuShow] = useState(false)
 
+  const onLogout = () => {
+    localStorage.removeItem("token");
+    // window.location = "/sap/pages/login"
+  }
+
   const Content = (props) => {
     return (
       <React.Fragment>
         <ul className="list-group" style={{width: "120px"}}>
-          <Link className="custom-menu" to="/pages/home"><li className="list-group-item custom-menu-item">Home</li></Link>
-          <Link className="custom-menu" to="/pages/users"><li className="list-group-item custom-menu-item">Users</li></Link>
-          <Link className="custom-menu" to="/pages/profile"><li className="list-group-item custom-menu-item">Profile</li></Link>
-          <a className="custom-menu" href="/logout"><li className="list-group-item custom-menu-item">Logout</li></a>
+          <Link className="custom-menu" to="/sap/pages/home"><li className="list-group-item custom-menu-item">Home</li></Link>
+          <Link className="custom-menu" to="/sap/pages/users"><li className="list-group-item custom-menu-item">Users</li></Link>
+          <Link className="custom-menu" to="/sap/pages/profile"><li className="list-group-item custom-menu-item">Profile</li></Link>
+          <a className="custom-menu" href="/sap/pages/login" onClick={() => { onLogout() }}><li className="list-group-item custom-menu-item">Logout</li></a>
         </ul>
       </React.Fragment>
     );
@@ -57,19 +62,19 @@ const App = (props) => {
     </div>
 
     <Switch>
-      <Route path="/pages/users">
+      <Route path="/sap/pages/users">
         <Menu />
         <Layout><Users /></Layout>
       </Route>
-      <Route path="/pages/login">
+      <Route path="/sap/pages/login">
         <Menu />
         <Layout><Login /></Layout>
       </Route>
-      <Route path="/pages/profile">
+      <Route path="/sap/pages/profile">
         <Menu />
         <Layout><Profile /></Layout>
       </Route>
-      <Route path="/pages/home">
+      <Route path="/sap/pages/home">
         <Menu />
         <Layout><SearchApp /></Layout>
       </Route>
